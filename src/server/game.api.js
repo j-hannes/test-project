@@ -43,39 +43,36 @@ const getInitialFrodoPos = (world) =>
     return x >= 0 ? { x, y } : acc;
   }, undefined);
 
-const calculateGame = (world, path) =>
-  path.reduce(
-    ({ status, frodo, board }, direction) => {
-      if (status !== MESSAGES.CARRY_ON) {
+const calculateGame = (world, path) => {
+  const { status } = path.reduce(
+    ({ status, frodo }, direction) => {
+      if (status) {
         return { status };
       }
 
       const nextFrodo = getNextPos(frodo, direction);
 
-      if (isOutOfBounds(board, nextFrodo)) {
+      if (isOutOfBounds(world, nextFrodo)) {
         return { status: MESSAGES.OUT_OF_BOUNDS };
       }
-      if (hasFoundOrc(board, nextFrodo)) {
+      if (hasFoundOrc(world, nextFrodo)) {
         return { status: MESSAGES.DEAD };
       }
-      if (hasFoundMountDoom(board, nextFrodo)) {
+      if (hasFoundMountDoom(world, nextFrodo)) {
         return { status: MESSAGES.YAY };
       }
 
-      const nextBoard = getNextBoard(board, frodo, nextFrodo);
-
-      return {
-        frodo: nextFrodo,
-        board: nextBoard,
-        status,
-      };
+      return { frodo: nextFrodo };
     },
     {
-      board: world,
-      status: MESSAGES.CARRY_ON,
       frodo: getInitialFrodoPos(world),
     }
   );
+
+  return {
+    status: status || MESSAGES.CARRY_ON,
+  };
+};
 
 module.exports = {
   isOutOfBounds,
