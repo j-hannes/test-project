@@ -20,24 +20,6 @@ describe("isOutOfBounds", () => {
   });
 });
 
-describe("getNextBoard", () => {
-  it("replaces Frodo's position on board", () => {
-    expect(
-      getNextBoard(
-        [
-          ["-", "-"],
-          ["F", "-"],
-        ],
-        { x: 0, y: 1 },
-        { x: 1, y: 1 }
-      )
-    ).toEqual([
-      ["-", "-"],
-      ["-", "F"],
-    ]);
-  });
-});
-
 describe("calculateGame", () => {
   test("valid move I", () => {
     expect(calculateGame(world, "n".split(",")).status).toBe(MESSAGES.CARRY_ON);

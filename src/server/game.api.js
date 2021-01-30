@@ -24,19 +24,6 @@ const hasFoundOrc = (board, { x, y }) => board[y][x] === "O";
 
 const hasFoundMountDoom = (board, { x, y }) => board[y][x] === "D";
 
-const getNextBoard = (board, prevPos, pos) =>
-  board.map((row, i) =>
-    row.map((cell, j) => {
-      if (i === pos.y && j === pos.x) {
-        return "F";
-      }
-      if (i === prevPos.y && j === prevPos.x) {
-        return "-";
-      }
-      return cell;
-    })
-  );
-
 const getInitialFrodoPos = (world) =>
   world.reduce((acc, row, y) => {
     const x = row.findIndex((cell) => cell === "F");
@@ -44,22 +31,22 @@ const getInitialFrodoPos = (world) =>
   }, undefined);
 
 const calculateGame = (world, path) => {
-  const { status } = path.reduce(
-    ({ status, frodo }, direction) => {
-      if (status) {
-        return { status };
+  const { result } = path.reduce(
+    ({ result, frodo }, direction) => {
+      if (result) {
+        return { result };
       }
 
       const nextFrodo = getNextPos(frodo, direction);
 
       if (isOutOfBounds(world, nextFrodo)) {
-        return { status: MESSAGES.OUT_OF_BOUNDS };
+        return { result: MESSAGES.OUT_OF_BOUNDS };
       }
       if (hasFoundOrc(world, nextFrodo)) {
-        return { status: MESSAGES.DEAD };
+        return { result: MESSAGES.DEAD };
       }
       if (hasFoundMountDoom(world, nextFrodo)) {
-        return { status: MESSAGES.YAY };
+        return { result: MESSAGES.YAY };
       }
 
       return { frodo: nextFrodo };
@@ -70,12 +57,11 @@ const calculateGame = (world, path) => {
   );
 
   return {
-    status: status || MESSAGES.CARRY_ON,
+    status: result || MESSAGES.CARRY_ON,
   };
 };
 
 module.exports = {
   isOutOfBounds,
-  getNextBoard,
   calculateGame,
 };
