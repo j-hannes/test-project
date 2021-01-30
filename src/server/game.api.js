@@ -45,13 +45,12 @@ const getInitialFrodoPos = (world) =>
 
 const calculateGame = (world, path) =>
   path.reduce(
-    (prev, direction) => {
-      if (prev.status !== MESSAGES.CARRY_ON) {
-        return prev;
+    ({ status, frodo, board }, direction) => {
+      if (status !== MESSAGES.CARRY_ON) {
+        return { status };
       }
 
-      const { board } = prev;
-      const nextFrodo = getNextPos(prev.frodo, direction);
+      const nextFrodo = getNextPos(frodo, direction);
 
       if (isOutOfBounds(board, nextFrodo)) {
         return { status: MESSAGES.OUT_OF_BOUNDS };
@@ -63,12 +62,12 @@ const calculateGame = (world, path) =>
         return { status: MESSAGES.YAY };
       }
 
-      const nextBoard = getNextBoard(board, prev.frodo, nextFrodo);
+      const nextBoard = getNextBoard(board, frodo, nextFrodo);
 
       return {
         frodo: nextFrodo,
         board: nextBoard,
-        status: prev.status,
+        status,
       };
     },
     {
