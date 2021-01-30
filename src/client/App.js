@@ -13,8 +13,28 @@ const errorStyle = {
   color: "red",
 };
 
+const boardStyle = {
+  display: "inline-block",
+  borderTop: "1px solid #ccc",
+  borderLeft: "1px solid #ccc",
+  margin: "20px",
+};
+
+const cellStyle = {
+  width: "30px",
+  height: "30px",
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  borderBottom: "1px solid #ccc",
+  borderRight: "1px solid #ccc",
+};
+
+const showMap = false;
+
 function App() {
   const [status, setStatus] = useState("");
+  const [board, setBoard] = useState([[]]);
   const [error, setError] = useState("");
   const [path, setPath] = usePath([]);
 
@@ -23,7 +43,9 @@ function App() {
     fetch(`http://localhost:3001?path=${path.join(",")}`)
       .then((response) => response.json())
       .then(({ result }) => {
-        setStatus(result);
+        const { board, status } = result;
+        setStatus(status);
+        setBoard(board);
       })
       .catch((error) => {
         console.error(error);
@@ -56,6 +78,20 @@ function App() {
       />
       <p>Status: {status}</p>
       {error && <p style={errorStyle}>{error}</p>}
+      <hr />
+      <div style={boardStyle}>
+        {board.map((row, i) => (
+          <div key={i}>
+            {row.map((cell, j) => (
+              <span key={j} style={cellStyle}>
+                {showMap
+                  ? cell
+                  : (["-", "O", "D"].includes(cell) && <>&nbsp;</>) || cell}
+              </span>
+            ))}
+          </div>
+        ))}
+      </div>
     </section>
   );
 }

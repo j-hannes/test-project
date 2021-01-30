@@ -8,9 +8,9 @@ app.get("/", (req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
   const { path = "" } = req.query;
   const pathArray = path.split(",");
-  const { status } = calculateGame(world, pathArray);
+  const { board, status } = calculateGame(world, pathArray);
   console.log("status", status);
-  res.json({ result: status });
+  res.json({ result: { board, status } });
 });
 
 app.listen(port, () => {

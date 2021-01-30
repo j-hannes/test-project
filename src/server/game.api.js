@@ -24,11 +24,11 @@ const hasFoundOrc = (board, { x, y }) => board[y][x] === "O";
 
 const hasFoundMountDoom = (board, { x, y }) => board[y][x] === "D";
 
-const getNextBoard = (board, prevPos, pos) =>
+const getNextBoard = (board, prevPos, pos, replace = "F") =>
   board.map((row, i) =>
     row.map((cell, j) => {
       if (i === pos.y && j === pos.x) {
-        return "F";
+        return replace;
       }
       if (i === prevPos.y && j === prevPos.x) {
         return "-";
@@ -47,26 +47,35 @@ const calculateGame = (world, path) =>
   path.reduce(
     ({ status, frodo, board }, direction) => {
       if (status !== MESSAGES.CARRY_ON) {
-        return { status };
+        return { board, status };
       }
 
       const nextFrodo = getNextPos(frodo, direction);
 
       if (isOutOfBounds(board, nextFrodo)) {
-        return { status: MESSAGES.OUT_OF_BOUNDS };
+        return {
+          board: getNextBoard(board, frodo, frodo, "😵"),
+          status: MESSAGES.OUT_OF_BOUNDS,
+        };
       }
       if (hasFoundOrc(board, nextFrodo)) {
-        return { status: MESSAGES.DEAD };
+        return {
+          board: getNextBoard(board, frodo, nextFrodo, "☠️"),
+          status: MESSAGES.DEAD,
+        };
       }
       if (hasFoundMountDoom(board, nextFrodo)) {
-        return { status: MESSAGES.YAY };
+        return {
+          board: getNextBoard(board, frodo, nextFrodo, "🎊"),
+          status: MESSAGES.YAY,
+        };
       }
 
       const nextBoard = getNextBoard(board, frodo, nextFrodo);
 
       return {
-        frodo: nextFrodo,
         board: nextBoard,
+        frodo: nextFrodo,
         status,
       };
     },
