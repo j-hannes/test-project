@@ -4,7 +4,8 @@ import { usePath } from "./usePath";
 const gameStyle = {
   display: "inline-block",
   margin: "50px",
-  padding: "20px",
+  paddingLeft: "20px",
+  paddingRight: "20px",
   border: "1px solid #ccc",
 };
 
@@ -47,6 +48,7 @@ function App() {
         </ul>
       </aside>
       <hr />
+      <br />
       Path:{" "}
       <input
         value={path}
