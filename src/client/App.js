@@ -30,7 +30,7 @@ const cellStyle = {
   borderRight: "1px solid #ccc",
 };
 
-const showMap = false;
+const showMap = true;
 
 function App() {
   const [status, setStatus] = useState("");

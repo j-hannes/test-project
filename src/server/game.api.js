@@ -43,48 +43,61 @@ const getInitialFrodoPos = (world) =>
     return x >= 0 ? { x, y } : acc;
   }, undefined);
 
-const calculateGame = (world, path) =>
-  path.reduce(
-    ({ status, frodo, board }, direction) => {
+const getSymbol = (status) =>
+  (status === MESSAGES.OUT_OF_BOUNDS && "😵") ||
+  (status === MESSAGES.DEAD && "☠️") ||
+  (status === MESSAGES.YAY && "🎊") ||
+  "F";
+
+const calculateGame = (world, path) => {
+  const result = path.reduce(
+    ({ status, frodo }, direction) => {
       if (status !== MESSAGES.CARRY_ON) {
-        return { board, status };
+        return { status, frodo };
       }
 
       const nextFrodo = getNextPos(frodo, direction);
 
-      if (isOutOfBounds(board, nextFrodo)) {
+      if (isOutOfBounds(world, nextFrodo)) {
         return {
-          board: getNextBoard(board, frodo, frodo, "😵"),
           status: MESSAGES.OUT_OF_BOUNDS,
+          frodo,
         };
       }
-      if (hasFoundOrc(board, nextFrodo)) {
+      if (hasFoundOrc(world, nextFrodo)) {
         return {
-          board: getNextBoard(board, frodo, nextFrodo, "☠️"),
           status: MESSAGES.DEAD,
+          frodo: nextFrodo,
         };
       }
-      if (hasFoundMountDoom(board, nextFrodo)) {
+      if (hasFoundMountDoom(world, nextFrodo)) {
         return {
-          board: getNextBoard(board, frodo, nextFrodo, "🎊"),
           status: MESSAGES.YAY,
+          frodo: nextFrodo,
         };
       }
-
-      const nextBoard = getNextBoard(board, frodo, nextFrodo);
 
       return {
-        board: nextBoard,
         frodo: nextFrodo,
         status,
       };
     },
     {
-      board: world,
       status: MESSAGES.CARRY_ON,
       frodo: getInitialFrodoPos(world),
     }
   );
+
+  return {
+    ...result,
+    board: getNextBoard(
+      world,
+      getInitialFrodoPos(world),
+      result.frodo,
+      getSymbol(result.status)
+    ),
+  };
+};
 
 module.exports = {
   isOutOfBounds,
